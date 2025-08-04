@@ -1,0 +1,25 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Tailwind */
+@import "tailwindcss";
+@custom-variant hover (&:hover);
+
+/* Flowbite */
+@import "flowbite/src/themes/default";
+
+/* Theme Variables */
+/* @theme {
+    --color-primary: oklch(0.5603 0.1677 142.41);
+    --color-secondary: oklch(0.8015 0.2171 146.65);
+    --color-accent: oklch(0.7 0.2615 326.65);
+    --color-background: #f9fafb;
+    --color-foreground: #1f2937;
+} */
+
+@theme {
+  --color-primary: oklch(0.2 0 0);
+  --color-secondary: oklch(0.5 0 0);
+  --color-accent: oklch(0.8 0 0);
+  --color-background: #ffffff;
+  --color-foreground: #000000;
+}

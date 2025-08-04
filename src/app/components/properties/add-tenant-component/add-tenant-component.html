@@ -1,0 +1,86 @@
+<div class="max-w-md mx-auto bg-white p-6 space-y-4">
+  @if (!isSubmitDisabled) {
+    <h2 class="text-lg font-semibold text-gray-800">Add Tenant</h2>
+  } @else {
+    <h2 class="text-lg font-semibold text-gray-800">Tenant</h2>
+  }
+
+  <form [formGroup]="propertyService.tenantForm" (ngSubmit)="propertyService.submitForm()" class="space-y-4">
+
+    <!-- Name -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+      <input
+        type="text"
+        formControlName="name"
+        class="w-full border border-accent rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+        placeholder="Enter tenant name"
+      />
+      @if (propertyService.tenantForm.get('name')?.touched && propertyService.tenantForm.get('name')?.invalid) {
+        <div class="text-sm text-red-600 mt-1">
+          Name is required and must be at least 3 characters.
+        </div>
+      }
+    </div>
+
+    <!-- Phone -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+      <input
+        type="tel"
+        formControlName="phone"
+        class="w-full border border-accent rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+        placeholder="Enter 10-digit phone number"
+      />
+      @if (propertyService.tenantForm.get('phone')?.touched && propertyService.tenantForm.get('phone')?.invalid) {
+        <div class="text-sm text-red-600 mt-1">
+          Valid 10-digit phone number required.
+        </div>
+      }
+    </div>
+
+    <!-- Advance Paid Amount -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Advance Paid (₹)</label>
+      <input
+        type="number"
+        formControlName="advance"
+        class="w-full border border-accent rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+        placeholder="Enter advance amount"
+        min="0"
+      />
+      @if (propertyService.tenantForm.get('advance')?.touched && propertyService.tenantForm.get('advance')?.invalid) {
+        <div class="text-sm text-red-600 mt-1">
+          Advance must be a valid amount (0 or more).
+        </div>
+      }
+    </div>
+
+    <!-- Paid Date -->
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Advance Paid Date</label>
+      <input
+        type="date"
+        formControlName="paidDate"
+        class="w-full border border-accent rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/20"
+      />
+      @if (propertyService.tenantForm.get('paidDate')?.touched && propertyService.tenantForm.get('paidDate')?.invalid) {
+        <div class="text-sm text-red-600 mt-1">
+          Paid date is required.
+        </div>
+      }
+    </div>
+
+    <!-- Submit -->
+     @if (!isSubmitDisabled) {
+      <button
+        type="submit"
+        class="w-full bg-primary text-white font-semibold py-2 px-4 rounded hover:bg-secondary transition"
+        [disabled]="isSubmitDisabled || propertyService.tenantForm.invalid"
+      >
+        Add Tenant
+      </button>
+     }
+
+  </form>
+</div>

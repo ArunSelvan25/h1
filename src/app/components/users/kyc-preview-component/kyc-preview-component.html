@@ -1,0 +1,62 @@
+<div class="border rounded-2xl p-6 shadow-xl bg-white w-full">
+  <h3 class="text-lg font-semibold text-gray-900 mb-5 flex items-center justify-between">
+    <span class="flex items-center gap-2">
+      <span class="text-blue-600 text-xl">🪪</span>
+      Aadhar Documents
+    </span>
+    <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
+      {{ imageUrls.length }} Uploaded
+    </span>
+  </h3>
+
+  @if (imageUrls.length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      @for (url of imageUrls; track $index) {
+        <div class="relative group rounded-xl overflow-hidden border border-gray-200 shadow-sm bg-gray-50 hover:shadow-lg transition-all duration-300">
+          <!-- Index Tag -->
+          <div class="absolute top-2 left-2 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded-full z-10">
+            #{{ $index + 1 }}
+          </div>
+
+          <!-- Image -->
+          <div
+            class="aspect-video bg-gray-100 flex items-center justify-center cursor-zoom-in overflow-hidden"
+            (click)="previewImage(url)"
+          >
+            @if (!imageLoadErrors.has($index)) {
+              <img
+                [src]="url"
+                [alt]="'Aadhar Card ' + ($index + 1)"
+                class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
+                (error)="handleError($index)"
+                loading="lazy"
+              />
+            } @else {
+              <span class="text-gray-400 text-sm italic">❌ Failed to load</span>
+            }
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-end gap-2 px-4 py-3 border-t bg-white">
+            <button
+              class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition"
+              (click)="previewImage(url)"
+              title="Preview"
+            >
+              🔍 Preview
+            </button>
+            <button
+              class="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition"
+              (click)="downloadImage(url, $index)"
+              title="Download"
+            >
+              ⬇️ Download
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <p class="text-sm text-gray-500 italic text-center">No Aadhar images uploaded yet.</p>
+  }
+</div>
