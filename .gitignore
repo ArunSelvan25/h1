@@ -40,3 +40,32 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+
+
+# Backend
+backendH1/*.log
+backendH1/.DS_Store
+backendH1/.env
+backendH1/.env.backup
+backendH1/.env.production
+backendH1/.phpactor.json
+backendH1/.phpunit.result.cache
+backendH1/.fleet
+backendH1/.idea
+backendH1/.nova
+backendH1/.phpunit.cache
+backendH1/.vscode
+backendH1/.zed
+backendH1/auth.json
+backendH1/node_modules
+backendH1/public/build
+backendH1/public/hot
+backendH1/public/storage
+backendH1/storage/*.key
+backendH1/storage/pail
+backendH1/vendor
+backendH1/Homestead.json
+backendH1/Homestead.yaml
+backendH1/Thumbs.db
+

@@ -1,8 +1,10 @@
-<div class="border rounded-2xl p-6 shadow-xl bg-white w-full">
+
+@if (imageUrls) {
+<div class="p-6 bg-white w-full">
   <h3 class="text-lg font-semibold text-gray-900 mb-5 flex items-center justify-between">
     <span class="flex items-center gap-2">
-      <span class="text-blue-600 text-xl">🪪</span>
-      Aadhar Documents
+      <span class="text-blue-600 text-xl"></span>
+      Property Images
     </span>
     <span class="bg-gray-100 text-gray-600 text-xs px-3 py-1 rounded-full">
       {{ imageUrls.length }} Uploaded
@@ -39,14 +41,14 @@
           <!-- Actions -->
           <div class="flex items-center justify-end gap-2 px-4 py-3 border-t bg-white">
             <button
-              class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition"
+              class="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800 transition cursor-pointer"
               (click)="previewImage(url)"
               title="Preview"
             >
               🔍 Preview
             </button>
             <button
-              class="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition"
+              class="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition cursor-pointer"
               (click)="downloadImage(url, $index)"
               title="Download"
             >
@@ -60,3 +62,5 @@
     <p class="text-sm text-gray-500 italic text-center">No Aadhar images uploaded yet.</p>
   }
 </div>
+}
+

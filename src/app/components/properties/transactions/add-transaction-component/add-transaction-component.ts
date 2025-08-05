@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { PropertyServices } from '../../../../services/property/property-services';
 
@@ -10,11 +10,18 @@ import { PropertyServices } from '../../../../services/property/property-service
   templateUrl: './add-transaction-component.html',
   styleUrl: './add-transaction-component.css'
 })
-export class AddTransactionComponent {
+export class AddTransactionComponent implements OnInit {
 
   @Output() closePopup = new EventEmitter()
   
   propertyService = inject(PropertyServices)
+
+  ngOnInit(): void {
+    this.propertyService.transactionForm.patchValue({
+      rent: this.propertyService.propertyView()?.rent,
+      propertyId: this.propertyService.propertyView()?.id
+    })
+  }
 
   close () {
     this.closePopup.emit();

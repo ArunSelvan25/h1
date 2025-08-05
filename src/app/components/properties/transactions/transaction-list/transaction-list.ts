@@ -1,5 +1,5 @@
 import { DecimalPipe, DatePipe, NgClass, KeyValuePipe } from '@angular/common';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { PropertyServices } from '../../../../services/property/property-services';
 
 @Component({
@@ -15,13 +15,15 @@ import { PropertyServices } from '../../../../services/property/property-service
 })
 export class TransactionList {
 
+  propertyService = inject(PropertyServices);
+
+  @Input() listData: any;
+
   @Output() addTransactions = new EventEmitter()
 
   openDropdownIndex: number | null = null;
 
   expandedRows = new Set<number>();
-
-  constructor (public propertyService: PropertyServices) {}
 
   downloadInvoice (txn: any) {
     console.log('txn', txn);
@@ -32,7 +34,7 @@ export class TransactionList {
   }
 
   changeTransactionStatus(txn: any, newStatus: 'Pending' | 'Paid' | 'Failed') {
-    txn.status = newStatus;
+    this.propertyService.updateTransactionStatus(txn, newStatus)
   }
 
   handleStatusButtonClick(event: Event, index: number): void {

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { PropertyViewComponent } from '../property-view-component/property-view-component';
 import { AddTenantComponent } from '../add-tenant-component/add-tenant-component';
 import { TransactionList } from '../transactions/transaction-list/transaction-list';
@@ -19,15 +19,21 @@ import { KycPreviewComponent } from '../../users/kyc-preview-component/kyc-previ
   templateUrl: './property-component.html',
   styleUrl: './property-component.css'
 })
-export class PropertyComponent {
+export class PropertyComponent implements OnInit {
 
   propertyService = inject(PropertyServices);
+  route = inject(ActivatedRoute);
 
-  constructor (private route: ActivatedRoute) {
+
+  constructor () {
     this.route.paramMap.subscribe(params => {
       const id: number = Number(params.get('id'));
       this.propertyService.viewedPropertyId.set(id);
     });
+  }
+
+  ngOnInit(): void {
+    this.propertyService.getPropertyDetails();
   }
 
   addTransactionData(event: number) {

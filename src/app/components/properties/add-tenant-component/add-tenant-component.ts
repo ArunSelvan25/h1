@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { isPlatformBrowser } from '@angular/common';
 import { PropertyServices } from '../../../services/property/property-services';
 
 @Component({
@@ -10,29 +11,46 @@ import { PropertyServices } from '../../../services/property/property-services';
   templateUrl: './add-tenant-component.html',
   styleUrl: './add-tenant-component.css'
 })
-export class AddTenantComponent {
+export class AddTenantComponent implements OnInit {
+
+  propertyService = inject(PropertyServices)
+  platformId = inject(PLATFORM_ID);
+
+  @Input() tenantData: any;
 
   isSubmitDisabled = false;
 
-  constructor (public propertyService: PropertyServices) {
-    if (this.propertyService.propertyData()[0].tenant) {
-      const tenant = this.propertyService.propertyData()[0].tenant;
+  ngOnInit() {
+    
+    if (Object.keys(this.tenantData).length) {
+      this.propertyService.tenantForm.patchValue({
+        name: this.tenantData.name,
+        phone: this.tenantData.phone,
+        advance: this.tenantData.advance ?? 0,
+        paidDate: this.tenantData.paid_date ?? null,
+      });
 
-      if (tenant) {
-        this.propertyService.tenantForm.patchValue({
-          name: tenant.name,
-          phone: tenant.phone,
-          advance: tenant.advance ?? 0,
-          paidDate: tenant.paidDate ?? null,
-        });
+      this.propertyService.tenantForm.get('name')?.disable();
+      this.propertyService.tenantForm.get('phone')?.disable();
+      this.propertyService.tenantForm.get('advance')?.disable();
+      this.propertyService.tenantForm.get('paidDate')?.disable();
+      
 
-        this.propertyService.tenantForm.get('name')?.disable();
-        this.propertyService.tenantForm.get('phone')?.disable();
-        this.propertyService.tenantForm.get('advance')?.disable();
-        this.propertyService.tenantForm.get('paidDate')?.disable();
+      this.isSubmitDisabled = true;
+    }
+    this.propertyService.tenantForm.patchValue({
+      propertyId: this.propertyService.viewedPropertyId()
+    })
+    this.propertyService.tenantForm.get('propertyId');
 
-        this.isSubmitDisabled = true;
-      }
+  }
+
+  submitForm() {
+    if (this.propertyService.tenantForm.valid) {
+      this.isSubmitDisabled = true;
+      this.propertyService.submitForm()
+    } else {
+      this.propertyService.tenantForm.markAllAsTouched();
     }
   }
 
