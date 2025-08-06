@@ -21,6 +21,7 @@ export class AddTransactionComponent implements OnInit {
       rent: this.propertyService.propertyView()?.rent,
       propertyId: this.propertyService.propertyView()?.id
     })
+    this.propertyService.addTransactionFormField(true);
   }
 
   close () {

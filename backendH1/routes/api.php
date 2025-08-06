@@ -15,5 +15,6 @@ Route::prefix('v1')->group(function () {
         Route::post('/tenant', 'addTenant');
         Route::post('/transactions', 'storeTransaction');
         Route::post('/transaction/update', 'updateTransactionStatus');
+        Route::post('/remove-tenant', 'removeTenantFromProperty');
     });
 });

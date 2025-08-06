@@ -25,4 +25,8 @@ export class PropertyListComponent implements OnInit {
   showProperty(id: number) {
     this.router.navigate([`/property/${id}`])
   }
+
+  addProperty() {
+    this.router.navigate(['/add-property'])
+  }
 }

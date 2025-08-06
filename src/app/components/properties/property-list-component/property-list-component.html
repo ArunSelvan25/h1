@@ -1,28 +1,41 @@
-<div class="columns-1 sm:columns-2 lg:columns-3 gap-6 px-4 py-8 max-w-7xl mx-auto">
+<div class="max-w-7xl mx-auto px-4 flex justify-between items-center py-6">
+  <h2 class="text-xl font-semibold text-gray-800">Properties List</h2>
+  <button
+    class="inline-flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-lg shadow hover:bg-primary-dark transition-colors duration-200"
+    (click)="addProperty()"
+  >
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+      viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 4v16m8-8H4" />
+    </svg>
+    Add Property
+  </button>
+</div>
+<div class="columns-1 sm:columns-2 lg:columns-3 gap-6 px-4 py-10 max-w-7xl mx-auto">
   @if (propertyService.propertyData().length) {
     @for (property of propertyService.propertyData(); track $index) {
       <div
-        class="break-inside-avoid mb-6 rounded-xl overflow-hidden shadow-md border border-gray-200 bg-white hover:shadow-xl hover:-translate-y-1 transition-all duration-200"
+        class="break-inside-avoid mb-6 rounded-2xl overflow-hidden shadow-lg border border-gray-200 bg-white hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 group"
       >
         <!-- Property Image -->
-        <div class="relative w-full h-48 overflow-hidden group">
+        <!-- <div class="relative w-full h-52 overflow-hidden">
           <img
             [src]="property?.images?.[0] || 'https://source.unsplash.com/random/400x300?house'"
             [alt]="property?.name || 'Property Image'"
-            class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
           @if ((property?.images?.length ?? 0) > 1) {
-            <div class="absolute top-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded shadow">
+            <div class="absolute top-3 right-3 bg-black/70 text-white text-xs px-2 py-0.5 rounded-lg shadow">
               {{ property.images.length }} Photos
             </div>
           }
-        </div>
+        </div> -->
 
         <!-- Property Details -->
-        <div class="p-4 flex flex-col gap-3">
+        <div (click)="showProperty(property.id)" class="cursor-pointer p-5 flex flex-col gap-4">
           <!-- Title and Location -->
-          <div (click)="showProperty(property.id)" class="cursor-pointer">
-            <h3 class="text-base font-semibold text-gray-800 truncate">
+          <div class="space-y-1">
+            <h3 class="text-lg font-semibold text-gray-900 truncate">
               {{ property?.name || 'Unnamed Property' }}
             </h3>
             @if (property?.location) {
@@ -31,12 +44,12 @@
           </div>
 
           <!-- Tags -->
-          <div class="flex flex-wrap gap-1 text-xs font-medium">
+          <div class="flex flex-wrap gap-2 text-xs font-medium">
             @if (property?.status) {
-              <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full">{{ property.status }}</span>
+              <span class="bg-green-100 text-green-700 px-2 py-1 rounded-full">{{ property.status }}</span>
             }
             @if (property?.type) {
-              <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{{ property.type }}</span>
+              <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">{{ property.type }}</span>
             }
             @if (property?.furnishing) {
               <span
@@ -45,7 +58,7 @@
                   'bg-purple-100 text-purple-700': property.furnishing === 'Furnished',
                   'bg-gray-100 text-gray-700': property.furnishing === 'Unfurnished'
                 }"
-                class="px-2 py-0.5 rounded-full"
+                class="px-2 py-1 rounded-full"
               >
                 {{ property.furnishing }}
               </span>
@@ -55,34 +68,40 @@
           <!-- Quick Stats -->
           <ul class="text-sm space-y-1 text-gray-600">
             @if (property?.phone) {
-              <li>📞 <span>{{ property.phone }}</span></li>
+              <li class="flex items-center gap-2">
+                📞 <span>{{ property.phone }}</span>
+              </li>
             }
             @if (property?.rent || property?.advance) {
-              <li>
+              <li class="flex items-center gap-2">
                 💰 
-                @if (property?.rent) {
-                  <strong class="text-primary">₹{{ property.rent }}</strong>/mo 
-                }
-                @if (property?.advance) {
-                  <span class="text-gray-500">| ₹{{ property.advance }} advance</span>
-                }
+                <span>
+                  @if (property?.rent) {
+                    <strong class="text-primary">₹{{ property.rent }}</strong>/mo
+                  }
+                  @if (property?.advance) {
+                    <span class="text-gray-500">| ₹{{ property.advance }} advance</span>
+                  }
+                </span>
               </li>
             }
             @if (property?.bedrooms || property?.bathrooms) {
-              <li>
+              <li class="flex items-center gap-2">
                 🛏 {{ property?.bedrooms || 0 }} Beds • 🛁 {{ property?.bathrooms || 0 }} Baths
               </li>
             }
             @if (property?.area_sqft) {
-              <li>📐 {{ property.area_sqft }} sqft</li>
+              <li class="flex items-center gap-2">
+                📐 {{ property.area_sqft }} sqft
+              </li>
             }
           </ul>
 
           <!-- Amenities -->
           @if (property?.amenities?.length) {
-            <div class="flex flex-wrap gap-1 pt-2">
+            <div class="flex flex-wrap gap-2 pt-3">
               @for (amenity of property.amenities; track $index) {
-                <span class="bg-gray-100 text-gray-700 text-xs px-2 py-0.5 rounded-full">
+                <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-lg">
                   {{ amenity }}
                 </span>
               }

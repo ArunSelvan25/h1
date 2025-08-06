@@ -57,7 +57,6 @@ class PropertyController extends Controller
     }
 
     public function addTenant(Request $request) {
-
         $validated = $request->validate([
             'name' => 'required|string',
             'phone' => 'required|string',
@@ -66,8 +65,6 @@ class PropertyController extends Controller
             'propertyId' => 'required|exists:properties,id',
         ]);
         
-        // Check tenant already exists
-        // If not exists store and retrive ID
         $tenant = $this->tenant->firstOrCreate(
             ['phone' => $validated['phone']],
             ['name' => $validated['name']]
@@ -77,7 +74,6 @@ class PropertyController extends Controller
             ->where('property_id', $validated['propertyId'])
             ->update(['status' => 0]);
 
-        // with the ID from user and proeprty store it in DB 
         $tenant->properties()->syncWithoutDetaching([
             $validated['propertyId'] => [
                 'advance' => $validated['advance'],
@@ -85,11 +81,21 @@ class PropertyController extends Controller
             ]
         ]);
 
+        $transaction = $this->createTransaction(
+            tenantId: $tenant->id,
+            propertyId: $validated['propertyId'],
+            amount: $validated['advance'],
+            date: $validated['paidDate'],
+            splitUp: ['Advance' => (float) $validated['advance']],
+        );
+
         return response()->json([
             'message' => 'Tenant assigned to property successfully.',
-            'tenant' => $tenant
+            'tenant' => $tenant,
+            'transaction' => $transaction,
         ]);
     }
+
 
     public function storeTransaction(Request $request) {
         $validated = $request->validate([
@@ -101,26 +107,24 @@ class PropertyController extends Controller
             'propertyId' => 'required|exists:properties,id',
         ]);
 
-        // Prepare the split_up array from fields
         $splitUp = collect($validated['fields'] ?? [])
             ->mapWithKeys(fn ($field) => [$field['name'] => (float) $field['value']])
             ->toArray();
 
-        $tenantId = PropertyTenant::where('property_id', $validated['propertyId'])
-        ->latest('id')
-        ->first();
+        $tenantRecord = PropertyTenant::where('property_id', $validated['propertyId'])
+            ->where('status', 1)
+            ->latest('id')
+            ->first();
 
-        $transaction = '';
-        if ($tenantId) {
-            $transaction = Transaction::create([
-                'tenant_id'   => $tenantId->tenant_id,
-                'property_id' => $validated['propertyId'],
-                'date'        => Carbon::parse($validated['date'])->format('Y-m-d'),
-                'amount'      => $validated['rent'],
-                'split_up'    => $splitUp,
-                'method'      => 'Cash',
-                'status'      => 'Paid',
-            ]);
+        $transaction = null;
+        if ($tenantRecord) {
+            $transaction = $this->createTransaction(
+                tenantId: $tenantRecord->tenant_id,
+                propertyId: $validated['propertyId'],
+                amount: $validated['rent'],
+                date: $validated['date'],
+                splitUp: $splitUp
+            );
         }
 
         return response()->json([
@@ -128,6 +132,27 @@ class PropertyController extends Controller
             'transaction' => $transaction,
         ]);
     }
+
+    private function createTransaction(
+        $tenantId, 
+        $propertyId, 
+        $amount, 
+        $date, 
+        array $splitUp = [], 
+        $method = 'Cash', 
+        $status = 'Paid'
+    ) {
+        return Transaction::create([
+            'tenant_id'   => $tenantId,
+            'property_id' => $propertyId,
+            'date'        => Carbon::parse($date)->format('Y-m-d'),
+            'amount'      => $amount,
+            'split_up'    => $splitUp,
+            'method'      => $method,
+            'status'      => $status,
+        ]);
+    }
+
 
     public function updateTransactionStatus(Request $request) {
         $transaction = Transaction::find($request->transactionId);
@@ -140,5 +165,15 @@ class PropertyController extends Controller
         return response()->json([
             'message' => 'Transaction updated successfully.',
         ]);
-    } 
+    }
+
+    public function removeTenantFromProperty(Request $request) {
+        DB::table('property_tenant')
+            ->where('property_id', $request->propertyId)
+            ->update(['status' => 0]);
+
+         return response()->json([
+            'message' => 'Tenant removed from property successfully.',
+        ]);
+    }
 }

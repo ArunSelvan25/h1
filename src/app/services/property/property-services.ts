@@ -64,10 +64,15 @@ export class PropertyServices {
 
   propertyData = signal<Property[]>([])
 
-  tenantForm: FormGroup;
-  transactionForm: FormGroup;
+  tenantForm!: FormGroup;
+  transactionForm!: FormGroup;
 
   constructor(private fb: FormBuilder) {
+    this.buildTenantForm();
+    this.transactionFormBuild();
+  }
+
+  buildTenantForm() {
     this.tenantForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
       phone: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
@@ -75,7 +80,9 @@ export class PropertyServices {
       paidDate: [null, [Validators.required]],
       propertyId: ['', [Validators.required]],
     });
+  }
 
+  transactionFormBuild() {
     this.transactionForm = this.fb.group({
       rent: [null, Validators.required],
       date: [this.getTodayDate(), Validators.required],
@@ -83,13 +90,20 @@ export class PropertyServices {
       propertyId: [null, [Validators.required]]
     });
 
+    this.transactionFields.valueChanges.subscribe((fields) => {
+      const total = fields.reduce((sum: number, field: any) => {
+        const value = parseFloat(field.value);
+        return sum + (isNaN(value) ? 0 : value);
+      }, 0);
+
+      this.transactionForm.get('rent')?.setValue(total, { emitEvent: false });
+    });
   }
 
   getProperties() {
     this.http.get<{message: string, data: Property[]}>('http://127.0.0.1:8000/api/v1/properties')
       .subscribe({
         next: (data) => {
-          console.log('data', data);
           this.propertyData.set(data.data);
         },
         error: (err) => {
@@ -113,22 +127,29 @@ export class PropertyServices {
   }
 
   // Create a field group
-  createField(): FormGroup {
-    return this.fb.group({
+  createField(isFirst: boolean = false): FormGroup {
+    console.log('asdsad');
+    
+    if (isFirst) {
+      return this.fb.group({
+        name: ['Rent', Validators.required],
+        value: [this.propertyView()?.rent, Validators.required]
+      });
+    } else {
+      return this.fb.group({
       name: ['', Validators.required],
       value: ['', Validators.required]
-    });
+    }); 
+    }
   }
 
   // Add a field
-  addTransactionFormField() {
-    this.transactionFields.push(this.createField());
+  addTransactionFormField(isFirst: boolean = false) {
+    this.transactionFields.push(this.createField(isFirst));
   }
 
   // Remove a field by index
   removeTransactionField(index: number) {
-    console.log('index', index);
-    
     this.transactionFields.removeAt(index);
   }
 
@@ -144,14 +165,13 @@ export class PropertyServices {
       this.http.post('http://127.0.0.1:8000/api/v1/transactions', this.transactionForm.value).subscribe({
         next: (response) => {
           this.getPropertyDetails();
-          console.log('Success:', response)
+          this.transactionFormBuild();
         },
         error: (error) => console.error('Error:', error),
       });
     } else {
       this.transactionForm.markAllAsTouched();
     }
-    console.log(this.transactionForm.value);
     this.isAddTransaction.set(false)
   }
 
@@ -190,5 +210,13 @@ export class PropertyServices {
       },
       error: (error) => console.error('Error:', error),
     });
+  }
+
+  removeTenantFromProperty(propertyId: number) {
+    let data = {
+      propertyId
+    }
+
+    return this.http.post('http://127.0.0.1:8000/api/v1/remove-tenant', data);
   }
 }

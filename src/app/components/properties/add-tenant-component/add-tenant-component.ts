@@ -21,27 +21,44 @@ export class AddTenantComponent implements OnInit {
   isSubmitDisabled = false;
 
   ngOnInit() {
-    
+    const form = this.propertyService.tenantForm;
     if (Object.keys(this.tenantData).length) {
-      this.propertyService.tenantForm.patchValue({
+      // Pre-fill the form with existing tenant data
+      form.patchValue({
         name: this.tenantData.name,
         phone: this.tenantData.phone,
         advance: this.tenantData.advance ?? 0,
         paidDate: this.tenantData.paid_date ?? null,
       });
 
-      this.propertyService.tenantForm.get('name')?.disable();
-      this.propertyService.tenantForm.get('phone')?.disable();
-      this.propertyService.tenantForm.get('advance')?.disable();
-      this.propertyService.tenantForm.get('paidDate')?.disable();
-      
+      form.get('name')?.disable();
+      form.get('phone')?.disable();
+      form.get('advance')?.disable();
+      form.get('paidDate')?.disable();
 
       this.isSubmitDisabled = true;
+    } else {
+      // Reset the form and re-enable all controls
+      form.reset({
+        name: '',
+        phone: '',
+        advance: 0,
+        paidDate: null,
+        propertyId: this.propertyService.viewedPropertyId(),
+      });
+
+      form.get('name')?.enable();
+      form.get('phone')?.enable();
+      form.get('advance')?.enable();
+      form.get('paidDate')?.enable();
+
+      this.isSubmitDisabled = false;
     }
-    this.propertyService.tenantForm.patchValue({
+
+    // Ensure propertyId is always patched even if tenantData is empty
+    form.patchValue({
       propertyId: this.propertyService.viewedPropertyId()
-    })
-    this.propertyService.tenantForm.get('propertyId');
+    });
 
   }
 
@@ -52,6 +69,17 @@ export class AddTenantComponent implements OnInit {
     } else {
       this.propertyService.tenantForm.markAllAsTouched();
     }
+  }
+
+  removeTenant(propertyId: number) {
+    this.propertyService.removeTenantFromProperty(propertyId).subscribe({
+      next: (response) => {
+        console.log('response', response);
+        this.propertyService.buildTenantForm();
+        this.ngOnInit();
+      },
+      error: (error) => console.error('Error:', error),
+    });
   }
 
 }
