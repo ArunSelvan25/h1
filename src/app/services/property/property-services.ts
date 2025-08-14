@@ -5,8 +5,6 @@ import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '
 export interface Tenant {
   name: string;
   phone: string;
-  advance: string;
-  paid_date: string;
 }
 
 export interface Property {
@@ -105,6 +103,7 @@ export class PropertyServices {
       .subscribe({
         next: (data) => {
           this.propertyData.set(data.data);
+          this.tenantDatas.set({});
         },
         error: (err) => {
           console.log('err', err);

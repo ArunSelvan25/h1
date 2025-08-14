@@ -9,13 +9,14 @@
 
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-8">
-        <a href="#" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium">Home</a>
-        <a href="#" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium">Services</a>
+        <button [routerLink]="['']" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium cursor-pointer">Property</button>
+        <button [routerLink]="['tenants']" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium cursor-pointer">Tenant</button>
+        <!-- <a href="#" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium">Services</a>
         <a href="#" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium">About</a>
         <a href="#" class="text-foreground hover:text-primary transition-colors duration-200 text-sm font-medium">Contact</a>
         <button class="ml-4 px-5 py-2 bg-primary hover:opacity-90 text-white text-sm rounded-lg transition font-semibold shadow-md">
           Get Started
-        </button>
+        </button> -->
       </div>
 
       <!-- Mobile Hamburger -->
@@ -40,13 +41,13 @@
   <!-- Mobile Menu -->
   @if (mobileMenuOpen) {
     <div class="md:hidden px-6 pb-6 pt-4 space-y-4 bg-background border-t border-foreground/10 shadow-lg z-50">
-      <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">Home</a>
-      <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">Services</a>
+      <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">Property List</a>
+      <!-- <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">Services</a>
       <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">About</a>
       <a href="#" class="block text-foreground hover:text-primary transition text-base font-medium">Contact</a>
       <button class="w-full bg-primary text-white py-2 rounded-lg hover:opacity-90 transition font-semibold shadow">
         Get Started
-      </button>
+      </button> -->
     </div>
   }
 </nav>

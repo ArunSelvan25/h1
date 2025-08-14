@@ -176,4 +176,22 @@ class PropertyController extends Controller
             'message' => 'Tenant removed from property successfully.',
         ]);
     }
+
+    public function getAllTenants() {
+        $tenants = $this->tenant->select('id', 'name', 'phone')->orderBy('created_at', 'desc')->get();
+
+        return response()->json([
+            'message' => 'Tenant list successfully.',
+            'data' => $tenants
+        ]);
+
+    }
+
+    public function getTenantDetails($id) {
+        $transactionsOfTenant = Transaction::where('tenant_id', $id)->with('property', 'tenant')->get();
+        return response()->json([
+            'message' => 'Tenant transactionlist success.',
+            'data' => TransactionResource::collection($transactionsOfTenant)
+        ]);
+    }
 }
